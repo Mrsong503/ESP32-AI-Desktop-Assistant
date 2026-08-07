@@ -1,10 +1,10 @@
 # Eliya's Mind - 项目进度记录
 
 ## 最后更新
-2026-08-05 02:45 (Asia/Shanghai)
+2026-08-07 21:58 (Asia/Shanghai)
 
 ## 当前状态
-用户去睡觉了，明天继续。ESP-IDF 工具链下载超时，需要继续。
+小智 ESP-IDF 固件已成功编译烧录，语音对话正常。下一步：实现 AHT20 温湿度语音查询（MCP Tool）。
 
 ## 已完成的工作
 
@@ -22,11 +22,16 @@
 - 编译流程：`python scripts/build.py --board bread-compact-wifi`
 - 唤醒词：`CONFIG_SR_WN_WN9_NIHAOXIAOZHI_TTS=y`（"你好小智"）
 
-### 3. ESP-IDF 安装进度
-- ✅ git clone 完成（140 个组件 + 所有子模块）
-- ✅ Python 3.11 安装成功（`C:\Users\13455\AppData\Local\Programs\Python\Python311`）
-- ⏳ install.bat 下载工具链超时（10分钟限制，约 21%）
-- PlatformIO Core 6.1.19 已安装
+### 3. ESP-IDF 安装完成
+- ✅ ESP-IDF v5.5.5 安装完成
+- ✅ xiaozhi 编译烧录成功
+- ✅ 音频正常（麦克风 + 扬声器）
+
+### 4. GitHub 项目完善
+- ✅ 提交 xiaozhi-esp32 源码到 `firmware/`（含完整板级配置）
+- ✅ 更新根 README.md 反映真实进度
+- ✅ 更新 docs/Architecture.md（MCP 架构说明）
+- ✅ 推送 PROGRESS.md 到远程仓库
 
 ## 硬件接线（已验证）
 | 外设 | 引脚 | 状态 |
@@ -41,51 +46,39 @@
 | AHT20 SCL | GPIO9 | ✅ |
 | RGB LED | GPIO48 | ✅ |
 
-## 下一步（明天继续）
+## 下一步：语音查询温湿度（AHT20 MCP Tool）
 
-### 选项 A：继续下载 ESP-IDF 工具链
-```powershell
-# 1. 设置 Python 3.11
-$env:PATH = 'C:\Users\13455\AppData\Local\Programs\Python\Python311;C:\Users\13455\AppData\Local\Programs\Python\Python311\Scripts;' + $env:PATH
+### 设计方案
+利用小智内置 MCP（Model Context Protocol）框架，注册自定义工具：
 
-# 2. 进入 ESP-IDF 目录
-cd C:\esp-idf
+1. **新建** `aht20_sensor.h` / `aht20_sensor.cc`（board 目录下）
+   - 移植自 `esp32_test/firmware/main/sensors/aht20/`（已验证）
+   - 使用 ESP-IDF `driver/i2c_master.h` API
+   - I2C: SDA=GPIO8, SCL=GPIO9
 
-# 3. 运行 install.bat（增加超时时间）
-.\install.bat esp32s3
-```
+2. **修改** `compact_wifi_board.cc` 的 `InitializeTools()`
+   - 新建 I2C 总线（GPIO8/9，I2C_NUM_1）
+   - 初始化 AHT20
+   - 注册 MCP 工具：`self.sensor.get_temperature_humidity`
 
-### 选项 B：检查 PlatformIO 是否已有 ESP-IDF
-```powershell
-# PlatformIO 可能已经安装了 ESP-IDF 工具链
-# 检查版本
-& 'C:\Users\13455\.platformio\penv\Scripts\pio.exe' --version
-```
+3. **修改** `config.h`
+   - 添加 `AHT20_SDA_PIN GPIO_NUM_8`、`AHT20_SCL_PIN GPIO_NUM_9`
 
-### 选项 C：直接用 PlatformIO 编译小智项目
-如果 PlatformIO 已有 ESP-IDF，可以直接编译：
-```powershell
-# 进入小智项目
-cd "C:\Users\13455\Desktop\Eliya's mind\reference\xiaozhi-esp32"
-
-# 用 Python 3.11 编译
-python scripts/build.py --board bread-compact-wifi
-```
-
-## 关键路径
+### 关键路径
 - ESP-IDF: `C:\esp-idf`
-- 小智项目: `C:\Users\13455\Desktop\Eliya's mind\reference\xiaozhi-esp32`
-- 配置文件: `reference\xiaozhi-esp32\main\boards\bread-compact-wifi\config.h`
-- PlatformIO: `C:\Users\13455\.platformio\`
+- 小智项目: `c:\Users\13455\Desktop\Eliya's mind\reference\xiaozhi-esp32`
+- 板级配置: `reference\xiaozhi-esp32\main\boards\bread-compact-wifi\`
+- 参考驱动: `C:\Users\13455\Documents\PlatformIO\Projects\esp32_test\firmware\main\sensors\aht20\`
 
 ## 待完成任务
-- [ ] ESP-IDF 工具链安装完成
-- [ ] 编译小智固件（`python scripts/build.py --board bread-compact-wifi`）
-- [ ] 烧录到 ESP32-S3
-- [ ] 配网（连接 WiFi）
-- [ ] 唤醒词测试（"小智小智"）
+- [ ] 编写 AHT20 驱动（aht20_sensor.h/cc）
+- [ ] 修改 compact_wifi_board.cc 注册 MCP 工具
+- [ ] 修改 config.h 添加 AHT20 引脚
+- [ ] 编译烧录验证
+- [ ] 语音测试（"你好小智，现在温度多少？"）
 
 ## 备注
 - 用户明确要求：不要自己实现 WebSocket/MQTT/Opus/ESP-SR，全部用小智官方源码
-- 只修改 config.h 适配硬件，不破坏官方项目结构
+- 只修改 config.h 和 board 目录，不破坏官方项目结构
 - 唤醒词是"你好小智"（CONFIG_SR_WN_WN9_NIHAOXIAOZHI_TTS）
+- MCP 自定义工具必须在板级 `InitializeTools()` 中注册（mcp_server.cc 官方注释明确）
