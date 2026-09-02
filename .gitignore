@@ -9,22 +9,17 @@
 firmware/.pio/
 firmware/build/
 
-# 参考项目（第三方，不提交到本仓库）
-# 但保留 AHT20 修复文件
+# 参考项目（xiaozhi-esp32 ESP-IDF 固件，完整提交）
+# 其内部 .gitignore 会排除 build/、managed_components/ 等派生文件
+!reference/
 reference/*
 !reference/xiaozhi-esp32/
-reference/xiaozhi-esp32/*
-!reference/xiaozhi-esp32/main/
-reference/xiaozhi-esp32/main/*
-!reference/xiaozhi-esp32/main/boards/
-reference/xiaozhi-esp32/main/boards/*
-!reference/xiaozhi-esp32/main/boards/bread-compact-wifi/
-reference/xiaozhi-esp32/main/boards/bread-compact-wifi/*
-!reference/xiaozhi-esp32/main/boards/bread-compact-wifi/aht20_sensor.cc
 
 # 预编译固件（大文件，不提交）
 firmware/prebuilt/
 
 # 系统文件
 Thumbs.db
-.DS_Store`n# ��ݷ�ʽ`n*.lnk
+.DS_Store
+*.lnk
+
