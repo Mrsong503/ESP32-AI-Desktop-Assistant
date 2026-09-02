@@ -1,10 +1,10 @@
 # Eliya's Mind - 项目进度记录
 
 ## 最后更新
-2026-08-07 21:58 (Asia/Shanghai)
+2026-09-03 00:16 (Asia/Shanghai)
 
 ## 当前状态
-小智 ESP-IDF 固件已成功编译烧录，语音对话正常。下一步：实现 AHT20 温湿度语音查询（MCP Tool）。
+✅ AHT20 温湿度语音查询全部完成：驱动、MCP 工具注册、固件烧录、语音实测均已通过（温度 33.12°C / 湿度 60.39%）。语音查询温湿度可正常使用。
 
 ## 已完成的工作
 
@@ -32,6 +32,27 @@
 - ✅ 更新根 README.md 反映真实进度
 - ✅ 更新 docs/Architecture.md（MCP 架构说明）
 - ✅ 推送 PROGRESS.md 到远程仓库
+
+### 5. AHT20 温湿度语音查询（已完成并实测通过）
+- ✅ 编写 AHT20 驱动 `aht20_sensor.h` / `aht20_sensor.cc`（bread-compact-wifi 板级目录）
+  - I2C: SDA=GPIO8, SCL=GPIO9
+  - 通信层：改用 GPIO bit-bang（`GPIO_MODE_INPUT_OUTPUT_OD`）绕过 ESP-IDF 5.x `i2c_master` 在 GPIO8/9 上的数据 NACK 问题
+- ✅ 修正 AHT20 标准数据格式解析：
+  - 温度：`raw_temperature = ((data[3]&0x0F)<<16)|(data[4]<<8)|data[5]` → `(raw*200/1048576)-50`
+  - 湿度：`raw_humidity = (data[1]<<12)|(data[2]<<4)|(data[3]>>4)` → `(raw*100/1048576)`
+  - 使用 `uint32_t` 避免溢出，status/CRC 字节不参与计算
+- ✅ 修改 `compact_wifi_board.cc` 的 `InitializeTools()`：初始化 I2C 总线、AHT20、注册 MCP 工具 `self.sensor.get_temperature_humidity`
+- ✅ 修改 `config.h` 添加 `AHT20_SDA_PIN GPIO8` / `AHT20_SCL_PIN GPIO9`
+- ✅ 重新编译烧录（合并固件 `C:\xiaozhi-build\build\xiaozhi.bin`，esptool 烧录 COM8）
+- ✅ 串口实测：
+  ```
+  Raw bytes: 18 9a 9b e6 a6 4a a2
+  raw_humidity=633278 raw_temperature=435786
+  humidity=60.39% temperature=33.12°C
+  AHT20 read OK: T=33.1°C H=60.4%
+  MCP: Add tool: self.sensor.get_temperature_humidity
+  ```
+- ✅ 语音实测：语音查询温湿度返回正确数据（温度 33.12°C / 湿度 60.39%）
 
 ## 硬件接线（已验证）
 | 外设 | 引脚 | 状态 |
@@ -71,11 +92,11 @@
 - 参考驱动: `C:\Users\13455\Documents\PlatformIO\Projects\esp32_test\firmware\main\sensors\aht20\`
 
 ## 待完成任务
-- [ ] 编写 AHT20 驱动（aht20_sensor.h/cc）
-- [ ] 修改 compact_wifi_board.cc 注册 MCP 工具
-- [ ] 修改 config.h 添加 AHT20 引脚
-- [ ] 编译烧录验证
-- [ ] 语音测试（"你好小智，现在温度多少？"）
+- [x] 编写 AHT20 驱动（aht20_sensor.h/cc）
+- [x] 修改 compact_wifi_board.cc 注册 MCP 工具
+- [x] 修改 config.h 添加 AHT20 引脚
+- [x] 编译烧录验证
+- [x] 语音测试（"你好小智，现在温度多少？"）
 
 ## 备注
 - 用户明确要求：不要自己实现 WebSocket/MQTT/Opus/ESP-SR，全部用小智官方源码
