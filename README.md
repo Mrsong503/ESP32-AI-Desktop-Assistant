@@ -29,6 +29,8 @@ Eliya's Mind/
 │   ├── main/              # 小智 xiaozhi-esp32 ESP-IDF 工程
 │   ├── platformio.ini     # PlatformIO 配置
 │   └── CMakeLists.txt     # ESP-IDF 配置
+├── reference/             # 小智 xiaozhi-esp32 官方源码（实际编译烧录用）
+│   └── xiaozhi-esp32/     # ESP-IDF 工程（含 bread-compact-wifi 板级定制 + AHT20 驱动）
 ├── server/                # 后端服务（Python，规划中）
 ├── app/                   # PWA 前端（规划中）
 ├── docs/                  # 文档
@@ -47,12 +49,14 @@ Eliya's Mind/
 
 ## 🚀 快速开始
 
-### 小智固件（ESP-IDF）
+### 小智固件（ESP-IDF，实际编译烧录使用）
 
 ```bash
-cd firmware
+cd reference/xiaozhi-esp32
 python scripts/build.py --board bread-compact-wifi
 ```
+
+> 注意：Windows 项目路径若含 Unicode 字符，可使用 `scripts/build_aht20.py`（自动复制到 ASCII 路径编译）。
 
 ### 自研工程（PlatformIO）
 
@@ -67,13 +71,14 @@ python scripts/build.py --board bread-compact-wifi
 - [x] Audio 模块（I2S 麦克风 INMP441 + 功放 MAX98357A）
 - [x] 小智 AI 语音接入（ESP-IDF 固件）
 - [x] 唤醒词 + 语音对话
-- [ ] 语音查询温湿度（AHT20 MCP Tool）——进行中
+- [x] 语音查询温湿度（AHT20 MCP Tool）
 - [ ] 后续功能...
 
 ## 📜 版本
 
 - v0.1.0 初始化工程与 Audio 模块
 - v0.2.0 小智 AI 语音接入（ESP-IDF）
+- v0.3.0 AHT20 温湿度语音查询（MCP Tool）
 
 ## 🔌 硬件接线
 
