@@ -1,0 +1,47 @@
+{
+    "folders": [
+        {
+            "name": "Eliya's mind (完整项目)",
+            "path": "."
+        },
+        {
+            "name": "firmware (PlatformIO)",
+            "path": "firmware"
+        }
+    ],
+    "settings": {
+        "workbench.statusBar.visible": true,
+        "platformio-ide.toolbar": [
+            {
+                "text": "$(home)",
+                "tooltip": "PlatformIO: Home",
+                "commands": "platformio-ide.showHome"
+            },
+            {
+                "text": "$(check)",
+                "tooltip": "PlatformIO: Build",
+                "commands": "platformio-ide.build"
+            },
+            {
+                "text": "$(arrow-right)",
+                "tooltip": "PlatformIO: Upload",
+                "commands": "platformio-ide.upload"
+            },
+            {
+                "text": "$(trashcan)",
+                "tooltip": "PlatformIO: Clean",
+                "commands": "platformio-ide.clean"
+            },
+            {
+                "text": "$(plug)",
+                "tooltip": "PlatformIO: Serial Monitor",
+                "commands": "platformio-ide.serialMonitor"
+            },
+            {
+                "text": "$(terminal)",
+                "tooltip": "PlatformIO: New Terminal",
+                "commands": "platformio-ide.newTerminal"
+            }
+        ]
+    }
+}

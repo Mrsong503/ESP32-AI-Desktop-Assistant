@@ -1,25 +1,35 @@
-# PlatformIO
+﻿# PlatformIO
 .pio/
 .vscode/.browse.c_cpp.db*
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
 
-# 构建产物
+# Build artifacts
 firmware/.pio/
 firmware/build/
+build/
 
-# 参考项目（xiaozhi-esp32 ESP-IDF 固件，完整提交）
-# 其内部 .gitignore 会排除 build/、managed_components/ 等派生文件
+# Reference project (xiaozhi-esp32 ESP-IDF firmware - complete source)
+# Its own .gitignore handles build/, managed_components/, sdkconfig, etc.
 !reference/
 reference/*
 !reference/xiaozhi-esp32/
 
-# 预编译固件（大文件，不提交）
+# Prebuilt binaries (large files, not committed)
 firmware/prebuilt/
 
-# 系统文件
+# System files
 Thumbs.db
 .DS_Store
 *.lnk
 
+# Logs and temp files
+*.log
+*.tmp
+*.bak
+build_scripts/*.log
+
+# Python
+__pycache__/
+*.pyc
